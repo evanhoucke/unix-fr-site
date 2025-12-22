@@ -1,17 +1,18 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
 
 :root {
-  --ink: #1c1c1a;
-  --ink-soft: #3a3a35;
-  --paper: #f3f0e8;
-  --sand: #e6ddcc;
-  --sage: #5e6f64;
-  --sun: #d4a837;
-  --clay: #b6693f;
-  --night: #1b2a2a;
-  --card: rgba(255, 255, 255, 0.8);
+  --ink: #e8f0ea;
+  --ink-soft: #b7c4bc;
+  --paper: #0b1110;
+  --sand: #101816;
+  --sage: #7fbf9b;
+  --sun: #78dba2;
+  --clay: #3b7a57;
+  --night: #0a0f0e;
+  --card: rgba(16, 24, 22, 0.82);
   --radius: 20px;
-  --shadow: 0 20px 60px rgba(27, 42, 42, 0.12);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  --glow: 0 0 0 1px rgba(127, 191, 155, 0.2);
 }
 
 * {
@@ -20,10 +21,13 @@
 
 body {
   margin: 0;
-  font-family: "Fraunces", "Merriweather", "Georgia", serif;
+  font-family: "IBM Plex Sans", "Helvetica", sans-serif;
   color: var(--ink);
-  background: radial-gradient(circle at top, #fff7e8 0%, #f3f0e8 60%, #efe7d8 100%);
-  line-height: 1.55;
+  background:
+    radial-gradient(circle at top, rgba(120, 219, 162, 0.12), transparent 55%),
+    radial-gradient(circle at 20% 20%, rgba(59, 122, 87, 0.18), transparent 50%),
+    linear-gradient(180deg, #0b1110 0%, #0a0f0e 50%, #0b1312 100%);
+  line-height: 1.6;
   font-size: 16px;
 }
 
@@ -34,7 +38,9 @@ a {
 
 .site-hero {
   padding: 32px 6vw 80px;
-  background: linear-gradient(135deg, #f2e9d8, #f8f2e6 55%, #f0e4d4);
+  background:
+    linear-gradient(135deg, rgba(11, 17, 16, 0.9), rgba(11, 17, 16, 0.4)),
+    radial-gradient(circle at 80% 0%, rgba(120, 219, 162, 0.2), transparent 50%);
   position: relative;
   overflow: hidden;
 }
@@ -45,7 +51,7 @@ a {
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(212, 168, 55, 0.25), transparent 70%);
+  background: radial-gradient(circle, rgba(120, 219, 162, 0.22), transparent 70%);
   top: -120px;
   right: -120px;
 }
@@ -56,7 +62,7 @@ a {
   width: 300px;
   height: 300px;
   border-radius: 32px;
-  background: linear-gradient(120deg, rgba(94, 111, 100, 0.2), rgba(182, 105, 63, 0.25));
+  background: linear-gradient(120deg, rgba(59, 122, 87, 0.35), rgba(120, 219, 162, 0.2));
   bottom: -60px;
   left: -40px;
   transform: rotate(-8deg);
@@ -72,11 +78,11 @@ a {
 }
 
 .logo {
-  font-family: "Space Grotesk", "Helvetica", sans-serif;
+  font-family: "JetBrains Mono", "Courier New", monospace;
   font-weight: 700;
   font-size: 1.2rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
 }
 
 .nav-links {
@@ -89,12 +95,13 @@ a {
 .nav-links a {
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(16, 24, 22, 0.8);
+  border: 1px solid rgba(127, 191, 155, 0.2);
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .nav-links a:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(20, 32, 28, 0.95);
   transform: translateY(-2px);
 }
 
@@ -114,11 +121,11 @@ a {
 }
 
 .eyebrow {
-  font-family: "Space Grotesk", "Helvetica", sans-serif;
+  font-family: "JetBrains Mono", "Courier New", monospace;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   font-size: 0.75rem;
-  color: var(--clay);
+  color: var(--sun);
 }
 
 .lead {
@@ -144,13 +151,13 @@ a {
 }
 
 .btn.primary {
-  background: var(--ink);
-  color: var(--paper);
+  background: linear-gradient(120deg, #2b7a57, #78dba2);
+  color: #06110d;
   box-shadow: var(--shadow);
 }
 
 .btn.ghost {
-  border-color: var(--ink);
+  border-color: var(--sun);
 }
 
 .hero-card {
@@ -159,11 +166,14 @@ a {
   padding: 24px;
   box-shadow: var(--shadow);
   backdrop-filter: blur(8px);
+  border: 1px solid rgba(127, 191, 155, 0.2);
 }
 
 .page-hero {
   padding: 36px 6vw 50px;
-  background: linear-gradient(135deg, #f2e9d8, #f8f2e6 55%, #efe7d8);
+  background:
+    linear-gradient(135deg, rgba(11, 17, 16, 0.95), rgba(11, 17, 16, 0.5)),
+    radial-gradient(circle at 75% 10%, rgba(120, 219, 162, 0.18), transparent 55%);
   position: relative;
   overflow: hidden;
 }
@@ -185,7 +195,8 @@ a {
 .subnav a {
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(16, 24, 22, 0.8);
+  border: 1px solid rgba(127, 191, 155, 0.18);
 }
 
 .checklist {
@@ -205,13 +216,13 @@ main {
 }
 
 .section.alt {
-  background: linear-gradient(180deg, rgba(246, 239, 224, 0.8), rgba(255, 255, 255, 0));
+  background: linear-gradient(180deg, rgba(16, 24, 22, 0.8), rgba(11, 17, 16, 0));
   border-radius: 32px;
   padding: 70px 4vw;
 }
 
 .section-title p {
-  font-family: "Space Grotesk", "Helvetica", sans-serif;
+  font-family: "JetBrains Mono", "Courier New", monospace;
   text-transform: uppercase;
   letter-spacing: 0.18em;
   font-size: 0.7rem;
@@ -224,11 +235,12 @@ main {
 }
 
 .toc {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(16, 24, 22, 0.8);
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: var(--shadow);
-  font-family: "Space Grotesk", "Helvetica", sans-serif;
+  font-family: "JetBrains Mono", "Courier New", monospace;
+  border: 1px solid rgba(127, 191, 155, 0.2);
 }
 
 .toc h3 {
@@ -247,18 +259,19 @@ main {
 }
 
 .note {
-  background: rgba(94, 111, 100, 0.12);
+  background: rgba(127, 191, 155, 0.12);
   border-radius: 16px;
   padding: 16px;
-  font-family: "Space Grotesk", "Helvetica", sans-serif;
+  font-family: "JetBrains Mono", "Courier New", monospace;
 }
 
 .pill {
   display: inline-block;
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(182, 105, 63, 0.15);
-  font-family: "Space Grotesk", "Helvetica", sans-serif;
+  background: rgba(120, 219, 162, 0.12);
+  border: 1px solid rgba(120, 219, 162, 0.3);
+  font-family: "JetBrains Mono", "Courier New", monospace;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -283,6 +296,7 @@ main {
   padding: 24px;
   box-shadow: var(--shadow);
   font-size: 0.98rem;
+  border: 1px solid rgba(127, 191, 155, 0.16);
 }
 
 .card h3 {
@@ -294,35 +308,37 @@ main {
 }
 
 .code-block {
-  background: var(--night);
-  color: #f6f0e6;
+  background: #09100e;
+  color: #c9f1da;
   border-radius: 16px;
   padding: 16px;
   font-family: "JetBrains Mono", "Courier New", monospace;
   font-size: 0.85rem;
   overflow-x: auto;
+  border: 1px solid rgba(120, 219, 162, 0.18);
 }
 
 .text-link {
-  font-family: "Space Grotesk", "Helvetica", sans-serif;
+  font-family: "JetBrains Mono", "Courier New", monospace;
   font-weight: 600;
-  color: var(--clay);
+  color: var(--sun);
 }
 
 .footer {
   padding: 32px 6vw 48px;
-  background: var(--ink);
-  color: var(--paper);
+  background: #070c0b;
+  color: var(--ink);
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 20px;
+  border-top: 1px solid rgba(127, 191, 155, 0.2);
 }
 
 .footer-links {
   display: flex;
   gap: 18px;
-  font-family: "Space Grotesk", "Helvetica", sans-serif;
+  font-family: "JetBrains Mono", "Courier New", monospace;
 }
 
 @media (max-width: 720px) {

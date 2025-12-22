@@ -40,6 +40,7 @@
           <a href="#nspawn">systemd-nspawn</a>
           <a href="#lxc">LXC</a>
           <a href="#kvm">KVM</a>
+          <a href="#kubernetes-dev">Kubernetes dev</a>
         </div>
       </div>
     </header>
@@ -276,6 +277,106 @@ docker compose down</code></pre>
               <li>Services pour exposer les apps</li>
               <li>ConfigMaps et Secrets pour la config</li>
             </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="kubernetes-dev" class="section alt">
+        <div class="section-title">
+          <p>Kubernetes poste dev</p>
+          <h2>Installer, utiliser, monitorer</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Installation locale</h3>
+            <p>
+              Pour un poste de developpeur, minikube ou kind suffisent. Elles
+              permettent un cluster local rapide, sans infra externe.
+            </p>
+            <div class="code-block">
+              <pre><code># Option 1: minikube
+sudo apt install kubectl
+minikube start --driver=docker
+kubectl get nodes
+
+# Option 2: kind
+sudo apt install kubectl
+kind create cluster --name dev
+kubectl get nodes</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Usage quotidien</h3>
+            <p>
+              Organiser les namespaces par projet, versionner les manifests, et
+              garder un cycle deploy/rollback simple.
+            </p>
+            <div class="code-block">
+              <pre><code>kubectl create ns demo
+kubectl -n demo apply -f k8s/
+kubectl -n demo get pods
+kubectl -n demo logs -f deploy/app
+kubectl -n demo rollout status deploy/app</code></pre>
+            </div>
+          </article>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Observabilite locale</h3>
+            <p>
+              Sur un cluster de dev, metrics-server suffit pour une vue CPU/RAM.
+              Pour aller plus loin, ajouter Prometheus + Grafana.
+            </p>
+            <div class="code-block">
+              <pre><code>kubectl top nodes
+kubectl top pods -n demo
+
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Debug et monitoring</h3>
+            <p>
+              Garder une boite a outils simple pour diagnostiquer rapidement.
+            </p>
+            <div class="code-block">
+              <pre><code>kubectl describe pod pod-name -n demo
+kubectl get events -n demo --sort-by=.metadata.creationTimestamp
+kubectl port-forward svc/app 8080:80 -n demo</code></pre>
+            </div>
+          </article>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Stack Prometheus/Grafana</h3>
+            <p>
+              Pour un poste dev, kube-prometheus-stack offre metrics, alerting
+              et dashboards sans complexite excessive.
+            </p>
+            <div class="code-block">
+              <pre><code># Helm requis
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install kps prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
+kubectl -n monitoring port-forward svc/kps-grafana 3000:80</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Logs et traces</h3>
+            <p>
+              Pour un setup complet, ajouter Loki (logs) et Tempo (traces).
+              Garder une retention faible sur un poste local.
+            </p>
+            <div class="code-block">
+              <pre><code># Loki
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install loki grafana/loki-stack -n monitoring
+
+# Tempo
+helm install tempo grafana/tempo -n monitoring
+kubectl -n monitoring port-forward svc/tempo 3100:3100</code></pre>
+            </div>
           </article>
         </div>
       </section>
