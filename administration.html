@@ -61,6 +61,7 @@
           <a href="#reseau">Reseau</a>
           <a href="#dns">DNS</a>
           <a href="#stockage-avance">Btrfs/ZFS</a>
+          <a href="#sauvegarde">Sauvegarde</a>
         </div>
       </div>
     </header>
@@ -507,6 +508,39 @@ sysctl net.ipv4.ip_forward</code></pre>
             </div>
             <p>
               Le routage policy-based est utile pour les environnements multi-WAN.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="sauvegarde" class="section">
+        <div class="section-title">
+          <p>Sauvegarde</p>
+          <h2>Backups fiables et restauration testee</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>restic pragmatique</h3>
+            <div class="code-block">
+              <pre><code>restic -r /mnt/backup init
+restic -r /mnt/backup backup /etc /var/lib
+restic -r /mnt/backup snapshots
+restic -r /mnt/backup restore latest --target /tmp/restore</code></pre>
+            </div>
+            <p>
+              Tester une restauration valide autant que la sauvegarde.
+            </p>
+          </article>
+          <article class="card">
+            <h3>borg + retention</h3>
+            <div class="code-block">
+              <pre><code>borg init --encryption=repokey /mnt/borg
+borg create /mnt/borg::daily-{now} /etc /home
+borg prune -v --keep-daily=7 --keep-weekly=4 /mnt/borg
+borg list /mnt/borg</code></pre>
+            </div>
+            <p>
+              Garder une retention claire et un plan de rotation documente.
             </p>
           </article>
         </div>

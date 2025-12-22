@@ -60,6 +60,7 @@
           <a href="#nftables">nftables</a>
           <a href="#apparmor">AppArmor</a>
           <a href="#audit-avance">Audit avance</a>
+          <a href="#supply-chain">Supply chain</a>
         </div>
       </div>
     </header>
@@ -388,6 +389,37 @@ sudo find / -perm -4000 -type f 2>/dev/null</code></pre>
             </div>
             <p>
               Identifier les comptes root et les binaires SUID sensibles.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="supply-chain" class="section">
+        <div class="section-title">
+          <p>Chaine d'approvisionnement</p>
+          <h2>Sources APT et signatures</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Keyrings propres</h3>
+            <div class="code-block">
+              <pre><code>curl -fsSL https://example.org/repo.gpg | sudo gpg --dearmor -o /usr/share/keyrings/vendor.gpg
+echo "deb [signed-by=/usr/share/keyrings/vendor.gpg] https://example.org/debian stable main" | sudo tee /etc/apt/sources.list.d/vendor.list
+sudo apt update</code></pre>
+            </div>
+            <p>
+              Eviter apt-key et isoler chaque source par keyring.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Pinning et verifs</h3>
+            <div class="code-block">
+              <pre><code>apt-cache policy nginx
+apt-get install -s nginx
+sudo apt-mark hold nginx</code></pre>
+            </div>
+            <p>
+              Verifier les versions et figer les packages critiques.
             </p>
           </article>
         </div>

@@ -58,6 +58,7 @@
           <a href="#reseau">Reseau</a>
           <a href="#disque">Disque</a>
           <a href="#charge">Charge</a>
+          <a href="#oom">OOM</a>
         </div>
       </div>
     </header>
@@ -293,6 +294,37 @@ journalctl -u nginx -S \"today\"</code></pre>
             </div>
             <p>
               Confirmer la version installee et les erreurs associees.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="oom" class="section alt">
+        <div class="section-title">
+          <p>OOM</p>
+          <h2>Pression memoire et kills</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Detecter l'oom killer</h3>
+            <div class="code-block">
+              <pre><code>journalctl -k -g "Out of memory"
+dmesg | grep -i oom
+cat /proc/pressure/memory</code></pre>
+            </div>
+            <p>
+              La pression memoire augmente avant l'impact applicatif.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Limiter et proteger</h3>
+            <div class="code-block">
+              <pre><code>systemctl show app.service | grep Memory
+sudo systemctl edit app.service
+sudo systemctl set-property app.service MemoryMax=2G</code></pre>
+            </div>
+            <p>
+              Ajouter des limites evite qu'un service sature la machine.
             </p>
           </article>
         </div>

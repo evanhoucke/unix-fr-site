@@ -175,6 +175,51 @@
           </article>
         </div>
       </section>
+
+      <section class="section alt">
+        <div class="section-title">
+          <p>Approfondissements</p>
+          <h2>Operations avancees a garder sous la main</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>DNS et latence</h3>
+            <p>
+              Diagnostiquer la resolution et garder un cache local stable
+              reduit les incidents applicatifs.
+            </p>
+            <div class="code-block">
+              <pre><code>resolvectl status
+dig +trace example.org
+sudo systemctl enable --now unbound</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Stockage resilient</h3>
+            <p>
+              Les scrubs et snapshots evitent les surprises sur des volumes
+              critiques.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo btrfs scrub start -Bd /
+sudo zpool status
+sudo zfs snapshot tank/data@daily</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Observabilite pratique</h3>
+            <p>
+              Logs structures, metrics et vues reseau rapides pour isoler un
+              incident en quelques minutes.
+            </p>
+            <div class="code-block">
+              <pre><code>journalctl -u app -o json | head
+curl -s localhost:9100/metrics | head
+ss -s</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">

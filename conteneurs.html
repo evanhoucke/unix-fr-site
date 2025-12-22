@@ -60,6 +60,7 @@
           <a href="#lxc">LXC</a>
           <a href="#kvm">KVM</a>
           <a href="#kubernetes-dev">Kubernetes dev</a>
+          <a href="#ressources">Ressources</a>
         </div>
       </div>
     </header>
@@ -396,6 +397,36 @@ helm install loki grafana/loki-stack -n monitoring
 helm install tempo grafana/tempo -n monitoring
 kubectl -n monitoring port-forward svc/tempo 3100:3100</code></pre>
             </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="ressources" class="section">
+        <div class="section-title">
+          <p>Ressources</p>
+          <h2>Cgroups et limites</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Limiter CPU et RAM</h3>
+            <div class="code-block">
+              <pre><code>docker run --memory 512m --cpus 1.5 --name api api:latest
+systemd-run --unit sandbox --property=MemoryMax=1G --property=CPUQuota=150% /bin/sleep 60</code></pre>
+            </div>
+            <p>
+              Des limites claires evitent qu'un conteneur degrade le host.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Observer les quotas</h3>
+            <div class="code-block">
+              <pre><code>systemd-cgtop
+cat /sys/fs/cgroup/system.slice/docker-*.scope/memory.current
+cat /sys/fs/cgroup/system.slice/docker-*.scope/cpu.stat</code></pre>
+            </div>
+            <p>
+              Les stats cgroup montrent les pics et les throttles.
+            </p>
           </article>
         </div>
       </section>

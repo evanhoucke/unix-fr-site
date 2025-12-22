@@ -59,6 +59,7 @@
           <a href="#chiffrement">Chiffrement</a>
           <a href="#reseau">Reseau</a>
           <a href="#post-install">Post-install</a>
+          <a href="#automation">Automatisation</a>
         </div>
       </div>
     </header>
@@ -345,6 +346,40 @@ sudo btrfs subvolume list /</code></pre>
               <pre><code>sudo lvcreate -L 5G -s -n root_snap /dev/vg0/root
 sudo lvs
 sudo lvremove /dev/vg0/root_snap</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="automation" class="section">
+        <div class="section-title">
+          <p>Automatisation</p>
+          <h2>Installer a grande echelle</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Preseed Debian</h3>
+            <p>
+              Preseed automatise l'installation. Versionner le preseed.cfg
+              assure la reproductibilite.
+            </p>
+            <div class="code-block">
+              <pre><code>d-i debian-installer/locale string fr_FR
+d-i netcfg/get_hostname string debian-node
+d-i partman-auto/method string lvm
+d-i passwd/root-login boolean false</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Cloud-init et images</h3>
+            <p>
+              Cloud-init applique users, clefs SSH et paquets des le premier
+              boot.
+            </p>
+            <div class="code-block">
+              <pre><code>cloud-init status --long
+sudo cloud-init clean
+sudo cloud-localds seed.iso user-data meta-data</code></pre>
             </div>
           </article>
         </div>

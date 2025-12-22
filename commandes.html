@@ -58,6 +58,7 @@
           <a href="#texte">Traitement texte</a>
           <a href="#fichiers">Fichiers</a>
           <a href="#scripting">Scripting</a>
+          <a href="#introspection">Introspection</a>
         </div>
       </div>
     </header>
@@ -352,6 +353,38 @@ screen -r backup</code></pre>
             </div>
             <p>
               screen reste disponible partout, utile sur des environnements anciens.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="introspection" class="section">
+        <div class="section-title">
+          <p>Introspection</p>
+          <h2>/proc, namespaces, cgroups</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>/proc pour comprendre un process</h3>
+            <div class="code-block">
+              <pre><code>cat /proc/1234/cmdline
+cat /proc/1234/limits
+cat /proc/1234/status | head</code></pre>
+            </div>
+            <p>
+              /proc donne l'etat exact d'un process sans outil externe.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Namespaces et cgroups</h3>
+            <div class="code-block">
+              <pre><code>lsns
+cat /proc/1234/cgroup
+sudo nsenter -t 1234 -n ip a
+systemd-cgls</code></pre>
+            </div>
+            <p>
+              Indispensable pour diagnostiquer des services conteneurises.
             </p>
           </article>
         </div>

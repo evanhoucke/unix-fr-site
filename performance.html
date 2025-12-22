@@ -59,6 +59,7 @@
           <a href="#io">I/O</a>
           <a href="#tuning">Tuning</a>
           <a href="#observabilite">Observabilite</a>
+          <a href="#ebpf">eBPF</a>
         </div>
       </div>
     </header>
@@ -387,6 +388,38 @@ cat /proc/loadavg</code></pre>
             <p>
               Ajouter de la capacite sur la base de tendances, pas sur un pic
               isole. Documenter chaque evolution.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="ebpf" class="section">
+        <div class="section-title">
+          <p>eBPF</p>
+          <h2>Tracing kernel sans redemarrage</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>bpftrace en pratique</h3>
+            <div class="code-block">
+              <pre><code>sudo bpftrace -e 'tracepoint:syscalls:sys_enter_execve { @[comm] = count(); }'
+sudo bpftrace -e 'kprobe:tcp_connect { @[comm] = count(); }'
+sudo bpftrace -e 'tracepoint:sched:sched_switch { @[args->prev_comm] = count(); }'</code></pre>
+            </div>
+            <p>
+              Idem pour identifier les chemins chauds sans instrumenter le code.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Flamegraph rapide</h3>
+            <div class="code-block">
+              <pre><code>sudo perf record -F 99 -a -g -- sleep 30
+sudo perf script > out.perf
+stackcollapse-perf.pl out.perf > out.folded
+flamegraph.pl out.folded > flame.svg</code></pre>
+            </div>
+            <p>
+              Les flamegraphs rendent visibles les hotspots CPU.
             </p>
           </article>
         </div>
