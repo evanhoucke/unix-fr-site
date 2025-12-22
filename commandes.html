@@ -305,6 +305,38 @@ printf '%s\n' *.log | xargs -n 1 gzip</code></pre>
           </article>
         </div>
       </section>
+
+      <section id="sessions" class="section alt">
+        <div class="section-title">
+          <p>Sessions</p>
+          <h2>tmux, screen et sessions persistantes</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>tmux essentiel</h3>
+            <div class="code-block">
+              <pre><code>tmux new -s prod
+tmux ls
+tmux attach -t prod
+tmux split-window -h</code></pre>
+            </div>
+            <p>
+              tmux garde vos sessions actives, meme apres une deconnexion SSH.
+            </p>
+          </article>
+          <article class="card">
+            <h3>screen rapide</h3>
+            <div class="code-block">
+              <pre><code>screen -S backup
+screen -ls
+screen -r backup</code></pre>
+            </div>
+            <p>
+              screen reste disponible partout, utile sur des environnements anciens.
+            </p>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">

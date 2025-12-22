@@ -40,6 +40,8 @@
           <a href="#stockage">Stockage</a>
           <a href="#users">Utilisateurs</a>
           <a href="#reseau">Reseau</a>
+          <a href="#dns">DNS</a>
+          <a href="#stockage-avance">Btrfs/ZFS</a>
         </div>
       </div>
     </header>
@@ -203,6 +205,41 @@ btrfs filesystem show</code></pre>
         </div>
       </section>
 
+      <section id="stockage-avance" class="section">
+        <div class="section-title">
+          <p>Stockage avance</p>
+          <h2>Btrfs et ZFS en production</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Btrfs</h3>
+            <p>
+              Btrfs offre snapshots, checksums et subvolumes. Adapter la
+              strategie de snapshots et de scrub selon la criticite.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo btrfs filesystem show
+sudo btrfs subvolume list /
+sudo btrfs scrub start -Bd /
+sudo btrfs balance start -dusage=75 /</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>ZFS</h3>
+            <p>
+              ZFS apporte l'integrite bout-a-bout, le pooling et des snapshots
+              efficaces. Sur Debian, utiliser zfsutils-linux.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo zpool status
+sudo zpool list
+sudo zfs list
+sudo zfs snapshot tank/data@daily</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section id="users" class="section">
         <div class="section-title">
           <p>Utilisateurs</p>
@@ -278,6 +315,38 @@ ssh -J bastion user@host</code></pre>
         </div>
       </section>
 
+      <section id="dns" class="section">
+        <div class="section-title">
+          <p>DNS</p>
+          <h2>Resolution fiable et caches locaux</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Verifier la resolution</h3>
+            <div class="code-block">
+              <pre><code>resolvectl status
+dig debian.org
+dig +trace debian.org
+getent hosts debian.org</code></pre>
+            </div>
+            <p>
+              Combiner resolvectl et dig permet de voir la chaine complete.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Cache local</h3>
+            <p>
+              Un cache DNS local reduit la latence et stabilise les services.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo apt install unbound
+sudo systemctl enable --now unbound
+sudo ss -tulpen | grep 53</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section id="journalisation" class="section">
         <div class="section-title">
           <p>Journalisation</p>
@@ -346,6 +415,79 @@ gpg -c secret.env</code></pre>
             </div>
             <p>
               Ne jamais stocker de secrets en clair dans un depot.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="time-sync" class="section">
+        <div class="section-title">
+          <p>Temps</p>
+          <h2>Synchronisation et horodatage fiable</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>systemd-timesyncd</h3>
+            <div class="code-block">
+              <pre><code>timedatectl status
+sudo timedatectl set-ntp true
+sudo nano /etc/systemd/timesyncd.conf</code></pre>
+            </div>
+            <p>
+              Un temps precis est crucial pour les logs et la securite.
+            </p>
+          </article>
+          <article class="card">
+            <h3>chrony</h3>
+            <div class="code-block">
+              <pre><code>sudo apt install chrony
+chronyc sources -v
+chronyc tracking</code></pre>
+            </div>
+            <p>
+              chrony est plus robuste en environnement instable ou isole.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="reseau-avance" class="section alt">
+        <div class="section-title">
+          <p>Reseau avance</p>
+          <h2>Bridges, VLAN, routage</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Bridges</h3>
+            <div class="code-block">
+              <pre><code>ip link add br0 type bridge
+ip link set br0 up
+ip link set eth0 master br0</code></pre>
+            </div>
+            <p>
+              Les bridges servent a connecter VMs ou conteneurs au reseau.
+            </p>
+          </article>
+          <article class="card">
+            <h3>VLAN</h3>
+            <div class="code-block">
+              <pre><code>ip link add link eth0 name eth0.10 type vlan id 10
+ip addr add 192.168.10.2/24 dev eth0.10
+ip link set eth0.10 up</code></pre>
+            </div>
+            <p>
+              Les VLAN segmentent le trafic pour limiter les risques.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Routage</h3>
+            <div class="code-block">
+              <pre><code>ip route show
+ip rule show
+sysctl net.ipv4.ip_forward</code></pre>
+            </div>
+            <p>
+              Le routage policy-based est utile pour les environnements multi-WAN.
             </p>
           </article>
         </div>

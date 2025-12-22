@@ -247,6 +247,37 @@ fsck -f /dev/sda2</code></pre>
           </article>
         </div>
       </section>
+
+      <section id="paquets" class="section">
+        <div class="section-title">
+          <p>Paquets</p>
+          <h2>Dependances cassees et services instables</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Reparer APT</h3>
+            <div class="code-block">
+              <pre><code>sudo apt -f install
+sudo dpkg --configure -a
+sudo apt --fix-broken install</code></pre>
+            </div>
+            <p>
+              Revenir a un etat coherent avant de relancer les services.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Verifier version</h3>
+            <div class="code-block">
+              <pre><code>apt-cache policy nginx
+dpkg -l | grep nginx
+journalctl -u nginx -S \"today\"</code></pre>
+            </div>
+            <p>
+              Confirmer la version installee et les erreurs associees.
+            </p>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">

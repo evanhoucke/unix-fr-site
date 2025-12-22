@@ -250,6 +250,35 @@ docker run --network backend app:latest</code></pre>
           </article>
         </div>
       </section>
+
+      <section id="orchestration" class="section">
+        <div class="section-title">
+          <p>Orchestration</p>
+          <h2>Du compose a la prod</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Docker Compose</h3>
+            <div class="code-block">
+              <pre><code>docker compose up -d
+docker compose logs -f
+docker compose down</code></pre>
+            </div>
+            <p>
+              Compose est ideal pour regrouper services, reseaux et volumes.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Principes k8s</h3>
+            <ul>
+              <li>Pods pour regrouper les conteneurs</li>
+              <li>Deployments pour assurer la disponibilite</li>
+              <li>Services pour exposer les apps</li>
+              <li>ConfigMaps et Secrets pour la config</li>
+            </ul>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">

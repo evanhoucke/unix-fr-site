@@ -39,6 +39,7 @@
           <a href="#memoire">Memoire</a>
           <a href="#io">I/O</a>
           <a href="#tuning">Tuning</a>
+          <a href="#observabilite">Observabilite</a>
         </div>
       </div>
     </header>
@@ -260,6 +261,113 @@ ngrep -W byline port 443</code></pre>
             </div>
             <p>
               La capture permet de voir les retransmissions et les erreurs TLS.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="profiling" class="section">
+        <div class="section-title">
+          <p>Profiling</p>
+          <h2>Observer le comportement applicatif</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>strace et ltrace</h3>
+            <div class="code-block">
+              <pre><code>sudo strace -fp 1234
+sudo strace -f -e trace=network -p 1234
+sudo ltrace -p 1234</code></pre>
+            </div>
+            <p>
+              strace montre les syscalls pour trouver les blocages et timeouts.
+            </p>
+          </article>
+          <article class="card">
+            <h3>perf</h3>
+            <div class="code-block">
+              <pre><code>sudo perf top
+sudo perf record -p 1234 -g -- sleep 30
+sudo perf report</code></pre>
+            </div>
+            <p>
+              perf identifie les hotspots CPU au niveau kernel et user-space.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="observabilite" class="section alt">
+        <div class="section-title">
+          <p>Observabilite avancee</p>
+          <h2>Logs, metrics, traces</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Logs structures</h3>
+            <div class="code-block">
+              <pre><code>journalctl -u nginx -o json-pretty | head
+journalctl -o short-iso -S \"1 hour ago\"
+logger -t app \"healthcheck ok\"</code></pre>
+            </div>
+            <p>
+              Des logs structures facilitent la recherche et l'indexation.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Metrics systeme</h3>
+            <div class="code-block">
+              <pre><code>curl http://localhost:9100/metrics
+ss -s
+cat /proc/loadavg</code></pre>
+            </div>
+            <p>
+              Exposer des metrics facilite la capacite et les alertes proactives.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Traces et latence</h3>
+            <p>
+              Les traces distribuees aident a suivre une requete de bout en bout,
+              surtout en microservices.
+            </p>
+            <div class="note">
+              Definir des SLO clairs avant d'ajouter de la complexite.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="capacity" class="section alt">
+        <div class="section-title">
+          <p>Capacite</p>
+          <h2>Anticiper la croissance</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Metriques clefs</h3>
+            <ul>
+              <li>CPU idle et load moyen</li>
+              <li>Latence disque moyenne et p95</li>
+              <li>Utilisation memoire + swap</li>
+              <li>Traffic reseau par interface</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Seuils</h3>
+            <p>
+              Definir des seuils d'alerte (warning/critical) avant d'avoir un
+              incident permet d'agir plus tot.
+            </p>
+            <div class="note">
+              Exemple: I/O wait > 20% pendant 5 minutes = alerte critique.
+            </div>
+          </article>
+          <article class="card">
+            <h3>Planification</h3>
+            <p>
+              Ajouter de la capacite sur la base de tendances, pas sur un pic
+              isole. Documenter chaque evolution.
             </p>
           </article>
         </div>

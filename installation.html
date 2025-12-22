@@ -297,6 +297,39 @@ sudo apt install strace lsof</code></pre>
           </article>
         </div>
       </section>
+
+      <section id="snapshot" class="section alt">
+        <div class="section-title">
+          <p>Snapshots</p>
+          <h2>Preparer le terrain pour les retours arriere</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Btrfs</h3>
+            <p>
+              Btrfs permet des snapshots rapides du systeme, utiles avant une
+              mise a jour majeure.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo btrfs subvolume create /@root
+sudo btrfs subvolume snapshot /@root /@root_snap
+sudo btrfs subvolume list /</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>LVM snapshot</h3>
+            <p>
+              Avec LVM, un snapshot est simple a faire avant une operation
+              risquee.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo lvcreate -L 5G -s -n root_snap /dev/vg0/root
+sudo lvs
+sudo lvremove /dev/vg0/root_snap</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
