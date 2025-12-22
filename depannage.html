@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>unix-fr.org - Depannage Linux</title>
+    <meta
+      name="description"
+      content="Depannage Linux : methodes, checklists et commandes pour resoudre rapidement les incidents."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-hero">
+      <nav class="nav">
+        <div class="logo">unix-fr.org</div>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="installation.html">Installation</a>
+          <a href="commandes.html">Commandes</a>
+          <a href="administration.html">Administration</a>
+          <a href="performance.html">Performance</a>
+          <a href="conteneurs.html">Conteneurs</a>
+          <a href="securite.html">Securite</a>
+          <a href="depannage.html">Depannage</a>
+          <a href="ressources.html">Ressources</a>
+        </div>
+      </nav>
+      <div class="hero-text">
+        <p class="eyebrow">Depannage</p>
+        <h1 class="page-title">Diagnostic rapide, actions controlees.</h1>
+        <p class="lead">
+          Une approche par symptomes, des checklists rapides, et des outils
+          precis pour resoudre les incidents sans empirer la situation.
+        </p>
+        <div class="subnav">
+          <a href="#checklist">Checklist</a>
+          <a href="#boot">Boot</a>
+          <a href="#reseau">Reseau</a>
+          <a href="#disque">Disque</a>
+          <a href="#charge">Charge</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="checklist" class="section">
+        <div class="section-title">
+          <p>Checklist</p>
+          <h2>Sequence rapide en cas d'incident</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Etapes de base</h3>
+            <ul>
+              <li>Observer l'etat global (uptime, load, memoire)</li>
+              <li>Verifier les services critiques</li>
+              <li>Lire les logs systeme et applicatifs</li>
+              <li>Identifier les changements recents</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Commandes flash</h3>
+            <div class="code-block">
+              <pre><code>uptime
+systemctl --failed
+journalctl -p err -b
+ss -tulpen
+free -h</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="boot" class="section alt">
+        <div class="section-title">
+          <p>Boot</p>
+          <h2>Systeme qui ne demarre plus</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Analyser les boots precedents</h3>
+            <div class="code-block">
+              <pre><code>journalctl -b -1
+systemd-analyze blame
+systemd-analyze critical-chain</code></pre>
+            </div>
+            <p>
+              Identifier la derniere etape avant le blocage.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Recuperer via chroot</h3>
+            <div class="code-block">
+              <pre><code>mount /dev/sda2 /mnt
+mount --bind /dev /mnt/dev
+mount --bind /proc /mnt/proc
+chroot /mnt /bin/bash</code></pre>
+            </div>
+            <p>
+              Permet de reparer grub ou un paquet casse.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="reseau" class="section">
+        <div class="section-title">
+          <p>Reseau</p>
+          <h2>Connexion instable ou absente</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Couche lien</h3>
+            <div class="code-block">
+              <pre><code>ip link
+ethtool eth0
+nmcli dev status</code></pre>
+            </div>
+            <p>
+              Verifier que l'interface est UP et negocie un lien valide.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Couche IP</h3>
+            <div class="code-block">
+              <pre><code>ip a
+ip r
+ping -c 3 1.1.1.1</code></pre>
+            </div>
+            <p>
+              Si le ping IP passe, le probleme est probablement DNS.
+            </p>
+          </article>
+          <article class="card">
+            <h3>DNS et appli</h3>
+            <div class="code-block">
+              <pre><code>dig debian.org
+cat /etc/resolv.conf
+curl -v https://example.org</code></pre>
+            </div>
+            <p>
+              Le curl detaille donne rapidement les etapes de negotiation.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="disque" class="section alt">
+        <div class="section-title">
+          <p>Disque</p>
+          <h2>Saturation, erreurs, I/O lente</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Diagnostic</h3>
+            <div class="code-block">
+              <pre><code>df -hT
+lsblk -f
+smartctl -a /dev/sda
+iostat -xz 1</code></pre>
+            </div>
+            <p>
+              Les erreurs SMART doivent etre traitees en priorite.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Nettoyage</h3>
+            <div class="code-block">
+              <pre><code>du -sh /var/log/* | sort -h
+journalctl --vacuum-time=7d
+apt clean</code></pre>
+            </div>
+            <p>
+              Nettoyer prudemment pour eviter de supprimer des logs utiles.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="charge" class="section">
+        <div class="section-title">
+          <p>Charge</p>
+          <h2>Serveur lent ou sature</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>CPU et memoire</h3>
+            <div class="code-block">
+              <pre><code>htop
+ps aux --sort=-%cpu | head
+ps aux --sort=-%mem | head</code></pre>
+            </div>
+            <p>
+              Identifier les processus dominants pour agir vite.
+            </p>
+          </article>
+          <article class="card">
+            <h3>I/O et locks</h3>
+            <div class="code-block">
+              <pre><code>iotop -oP
+lsof | grep deleted
+pidstat -d 1</code></pre>
+            </div>
+            <p>
+              Une I/O lente ou des fichiers supprimes peuvent bloquer un service.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Systeme</h3>
+            <div class="code-block">
+              <pre><code>systemctl --failed
+journalctl -p err -S "1 hour ago"
+free -h</code></pre>
+            </div>
+            <p>
+              Les erreurs systemd donnent un premier point d'ancrage.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="filesystem" class="section alt">
+        <div class="section-title">
+          <p>Filesystem</p>
+          <h2>Erreurs, remount ro, corruption</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Symptomes</h3>
+            <ul>
+              <li>Erreur "read-only filesystem"</li>
+              <li>Journal rempli d'erreurs I/O</li>
+              <li>Services qui ne demarrent plus</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Actions prudentes</h3>
+            <div class="code-block">
+              <pre><code>dmesg | tail -n 50
+mount | grep 'ro,'
+fsck -f /dev/sda2</code></pre>
+            </div>
+            <p>
+              Sauvegarder avant tout fsck sur un disque douteux.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <strong>unix-fr.org</strong>
+        <p>Depannage methodique pour Linux et Debian.</p>
+      </div>
+      <div class="footer-links">
+        <a href="administration.html">Administration</a>
+        <a href="performance.html">Performance</a>
+        <a href="securite.html">Securite</a>
+      </div>
+    </footer>
+  </body>
+</html>

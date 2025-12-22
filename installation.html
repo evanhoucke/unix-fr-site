@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>unix-fr.org - Installation Debian</title>
+    <meta
+      name="description"
+      content="Guide d'installation Debian : images, partitionnement, chiffrement et configuration initiale."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-hero">
+      <nav class="nav">
+        <div class="logo">unix-fr.org</div>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="installation.html">Installation</a>
+          <a href="commandes.html">Commandes</a>
+          <a href="administration.html">Administration</a>
+          <a href="performance.html">Performance</a>
+          <a href="conteneurs.html">Conteneurs</a>
+          <a href="securite.html">Securite</a>
+          <a href="depannage.html">Depannage</a>
+          <a href="ressources.html">Ressources</a>
+        </div>
+      </nav>
+      <div class="hero-text">
+        <p class="eyebrow">Installation Debian</p>
+        <h1 class="page-title">Installer Debian proprement, pour durer.</h1>
+        <p class="lead">
+          Cette page couvre les choix critiques avant l'installation, les
+          partitions, le chiffrement, et la configuration initiale pour
+          workstations et serveurs.
+        </p>
+        <div class="subnav">
+          <a href="#preparation">Preparation</a>
+          <a href="#partitions">Partitionnement</a>
+          <a href="#chiffrement">Chiffrement</a>
+          <a href="#reseau">Reseau</a>
+          <a href="#post-install">Post-install</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="preparation" class="section">
+        <div class="section-title">
+          <p>Avant d'installer</p>
+          <h2>Preparer un environnement stable</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Choisir la bonne image</h3>
+            <p>
+              Pour la plupart des usages, la netinst est ideale : elle telecharge
+              les paquets au fur et a mesure. Les images live servent plutot aux
+              tests rapides.
+            </p>
+            <ul>
+              <li>Verifier l'integrite SHA256 et la signature GPG</li>
+              <li>Preferer la branche stable pour la production</li>
+              <li>Selectionner l'architecture exacte (amd64, arm64)</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Firmware et compatibilite</h3>
+            <p>
+              Les firmwares non libres sont parfois necessaires (wifi, GPU). Les
+              images "firmware" simplifient l'installation sur certains laptops.
+            </p>
+            <div class="code-block">
+              <pre><code>lspci -nn | grep -i network
+lsusb
+uname -m</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="partitions" class="section alt">
+        <div class="section-title">
+          <p>Partitionnement</p>
+          <h2>Un schema simple et evolutif</h2>
+        </div>
+        <div class="split">
+          <div class="card">
+            <h3>Workstation classique</h3>
+            <div class="code-block">
+              <pre><code>/         30-50 Go ext4
+/home     reste du disque
+swap      1-2 x RAM (si hibernation)
+/boot/efi 512 Mo vfat</code></pre>
+            </div>
+            <p>
+              Ce schema couvre la plupart des besoins avec une separation claire
+              des donnees utilisateurs.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Serveur avec logs</h3>
+            <div class="code-block">
+              <pre><code>/         20-40 Go ext4
+/var      20-100 Go ext4
+/home     selon usage
+swap      4-8 Go
+/boot/efi 512 Mo vfat</code></pre>
+            </div>
+            <p>
+              Le /var isole les logs et les donnees applicatives pour eviter les
+              saturations critiques du systeme.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="chiffrement" class="section">
+        <div class="section-title">
+          <p>Chiffrement</p>
+          <h2>Proteger les donnees des la base</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>LUKS avec LVM</h3>
+            <p>
+              LUKS chiffre la partition physique, LVM permet de redimensionner
+              facilement. C'est un bon compromis securite et flexibilite.
+            </p>
+            <div class="code-block">
+              <pre><code>cryptsetup luksFormat /dev/sda3
+cryptsetup open /dev/sda3 cryptroot
+pvcreate /dev/mapper/cryptroot
+vgcreate vg0 /dev/mapper/cryptroot</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>TPM et clefs</h3>
+            <p>
+              Sur machines recentes, lier LUKS a un TPM simplifie le boot sans
+              compromettre la securite physique.
+            </p>
+            <div class="note">
+              Conserver une cle de secours hors ligne. En cas de panne TPM, sans
+              cle alternative, les donnees sont perdues.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="reseau" class="section alt">
+        <div class="section-title">
+          <p>Reseau initial</p>
+          <h2>Configurer IP et DNS proprement</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>DHCP classique</h3>
+            <p>
+              Le DHCP convient a la plupart des environnements. En serveur, il
+              faut reserver l'adresse via le routeur.
+            </p>
+            <div class="code-block">
+              <pre><code>nmcli dev status
+nmcli con show</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>IP statique</h3>
+            <p>
+              Sur serveur, une IP fixe est incontournable. Utiliser systemd
+              networking ou NetworkManager selon le contexte.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo nano /etc/network/interfaces
+sudo systemctl restart networking</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>DNS et resolv</h3>
+            <p>
+              Garder des resolvers fiables et verifier la latence. Resolver local
+              ou DNS cloud selon les besoins.
+            </p>
+            <div class="code-block">
+              <pre><code>cat /etc/resolv.conf
+systemd-resolve --status</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="post-install" class="section">
+        <div class="section-title">
+          <p>Post-installation</p>
+          <h2>Transformer l'installation en systeme de travail</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Paquets de base</h3>
+            <p>
+              Installer les outils essentiels et activer les mises a jour de
+              securite des le premier boot.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo apt update
+sudo apt install vim git curl htop ufw
+sudo apt install unattended-upgrades</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Users et sudo</h3>
+            <p>
+              Ne pas travailler en root. Creer un utilisateur admin et activer
+              le sudo avec un groupe specifique.
+            </p>
+            <div class="code-block">
+              <pre><code>adduser admin
+usermod -aG sudo admin
+sudo -l</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="boot-config" class="section alt">
+        <div class="section-title">
+          <p>Boot et firmware</p>
+          <h2>Parametrer UEFI, Secure Boot, microcode</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Microcode CPU</h3>
+            <p>
+              Installer les microcodes pour corriger des bugs materiels connus
+              et gagner en stabilite.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo apt install intel-microcode
+sudo apt install amd64-microcode
+grep microcode /var/log/dmesg</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Secure Boot</h3>
+            <p>
+              Sur postes modernes, Secure Boot est utile. Utiliser les paquets
+              signes Debian pour eviter les blocages.
+            </p>
+            <div class="note">
+              En cas de module non signe, desactiver Secure Boot ou signer les
+              modules avec mokutil.
+            </div>
+          </article>
+          <article class="card">
+            <h3>UEFI et NVRAM</h3>
+            <p>
+              Un boot qui saute un disque peut venir d'une entree UEFI corrompue.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo efibootmgr -v
+sudo efibootmgr -o 0001,0002
+ls /boot/efi/EFI</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="roles" class="section">
+        <div class="section-title">
+          <p>Roles</p>
+          <h2>Adapter l'installation a l'usage</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Serveur minimal</h3>
+            <p>
+              Pour un serveur, preferer une base sans interface graphique et un
+              set de paquets limite.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo apt install openssh-server ufw fail2ban
+sudo systemctl enable --now ssh
+sudo ufw allow 22/tcp</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Poste dev</h3>
+            <p>
+              Installer les outils de build, les runtimes et un set de debugging.
+            </p>
+            <div class="code-block">
+              <pre><code>sudo apt install build-essential git gcc gdb
+sudo apt install python3 python3-venv nodejs
+sudo apt install strace lsof</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <strong>unix-fr.org</strong>
+        <p>Installation propre et documentee pour Debian.</p>
+      </div>
+      <div class="footer-links">
+        <a href="commandes.html">Commandes</a>
+        <a href="administration.html">Administration</a>
+        <a href="securite.html">Securite</a>
+      </div>
+    </footer>
+  </body>
+</html>

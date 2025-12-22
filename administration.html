@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>unix-fr.org - Administration Linux & Debian</title>
+    <meta
+      name="description"
+      content="Administration Debian avancee : APT, systemd, kernel, stockage, reseau, users et journaux."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-hero">
+      <nav class="nav">
+        <div class="logo">unix-fr.org</div>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="installation.html">Installation</a>
+          <a href="commandes.html">Commandes</a>
+          <a href="administration.html">Administration</a>
+          <a href="performance.html">Performance</a>
+          <a href="conteneurs.html">Conteneurs</a>
+          <a href="securite.html">Securite</a>
+          <a href="depannage.html">Depannage</a>
+          <a href="ressources.html">Ressources</a>
+        </div>
+      </nav>
+      <div class="hero-text">
+        <p class="eyebrow">Administration</p>
+        <h1 class="page-title">Gerer Debian comme un systeme de production.</h1>
+        <p class="lead">
+          Gestion des paquets, services, demarrage, stockage, users et reseau.
+          Toutes les commandes utiles pour administrer au quotidien.
+        </p>
+        <div class="subnav">
+          <a href="#apt">APT</a>
+          <a href="#systemd">systemd</a>
+          <a href="#kernel">Kernel</a>
+          <a href="#stockage">Stockage</a>
+          <a href="#users">Utilisateurs</a>
+          <a href="#reseau">Reseau</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="apt" class="section">
+        <div class="section-title">
+          <p>Paquets</p>
+          <h2>APT et gestion propre des dependances</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Routines de maintenance</h3>
+            <div class="code-block">
+              <pre><code>sudo apt update
+sudo apt upgrade
+sudo apt full-upgrade
+sudo apt autoremove
+sudo apt clean</code></pre>
+            </div>
+            <p>
+              Un cycle d'upgrade propre evite les conflits. Verifier les
+              changements critiques via les notes de release.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Inspection de paquets</h3>
+            <div class="code-block">
+              <pre><code>apt-cache policy nginx
+apt-cache depends nginx
+dpkg -L nginx
+apt list --upgradable</code></pre>
+            </div>
+            <p>
+              Comprendre les dependances et les versions installees est la base
+              pour depanner un environnement complexe.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="systemd" class="section alt">
+        <div class="section-title">
+          <p>Services</p>
+          <h2>systemd, units, journaux</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Gestion de services</h3>
+            <div class="code-block">
+              <pre><code>sudo systemctl status nginx
+sudo systemctl enable nginx
+sudo systemctl restart nginx
+sudo systemctl is-failed --all</code></pre>
+            </div>
+            <p>
+              Les units systemd sont declaratives. Toujours lire la definition
+              et les overrides avant modification.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Overrides propres</h3>
+            <div class="code-block">
+              <pre><code>sudo systemctl edit nginx
+sudo systemctl cat nginx
+systemd-analyze blame</code></pre>
+            </div>
+            <p>
+              Utiliser drop-ins pour eviter d'ecraser les fichiers d'origine.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Journal et logs</h3>
+            <div class="code-block">
+              <pre><code>journalctl -u nginx -S "today"
+journalctl -p err -b
+journalctl --disk-usage</code></pre>
+            </div>
+            <p>
+              Le journal systemd est une source fiable, centralisee et horodatee.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="kernel" class="section">
+        <div class="section-title">
+          <p>Kernel</p>
+          <h2>Modules, params et initramfs</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Modules et diagnostic</h3>
+            <div class="code-block">
+              <pre><code>uname -r
+lsmod | head
+modprobe -r i915
+modinfo i915</code></pre>
+            </div>
+            <p>
+              Les modules actives dictent souvent les performances et la
+              compatibilite materielle.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Initramfs et boot</h3>
+            <div class="code-block">
+              <pre><code>sudo update-initramfs -u
+cat /etc/initramfs-tools/modules
+sudo update-grub</code></pre>
+            </div>
+            <p>
+              L'initramfs charge les modules critiques. Toujours mettre a jour
+              apres une modification du kernel.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="stockage" class="section alt">
+        <div class="section-title">
+          <p>Stockage</p>
+          <h2>Disques, LVM, systemes de fichiers</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Analyse disque</h3>
+            <div class="code-block">
+              <pre><code>lsblk -f
+blkid
+df -hT
+mount | column -t</code></pre>
+            </div>
+            <p>
+              Verifier type, UUID, et points de montage avant toute operation.
+            </p>
+          </article>
+          <article class="card">
+            <h3>LVM</h3>
+            <div class="code-block">
+              <pre><code>pvs
+vgs
+lvs
+lvextend -r -L +20G /dev/vg0/data</code></pre>
+            </div>
+            <p>
+              LVM permet d'etendre a chaud. Toujours valider l'espace libre.
+            </p>
+          </article>
+          <article class="card">
+            <h3>FS et checks</h3>
+            <div class="code-block">
+              <pre><code>tune2fs -l /dev/sda2
+xfs_info /dev/sdb1
+btrfs filesystem show</code></pre>
+            </div>
+            <p>
+              Comprendre la couche FS permet de diagnostiquer rapidement.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="users" class="section">
+        <div class="section-title">
+          <p>Utilisateurs</p>
+          <h2>Comptes, groupes, sudo</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Gestion quotidienne</h3>
+            <div class="code-block">
+              <pre><code>adduser dev
+usermod -aG sudo dev
+getent passwd dev
+id dev</code></pre>
+            </div>
+            <p>
+              Centraliser les groupes et ne pas multiplier les privileges.
+            </p>
+          </article>
+          <article class="card">
+            <h3>sudoers</h3>
+            <div class="code-block">
+              <pre><code>sudo visudo
+sudo -l
+cat /etc/sudoers.d/custom</code></pre>
+            </div>
+            <p>
+              Utiliser des fichiers /etc/sudoers.d pour les exceptions propres.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="reseau" class="section alt">
+        <div class="section-title">
+          <p>Reseau</p>
+          <h2>Configuration et diagnostic</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Interfaces</h3>
+            <div class="code-block">
+              <pre><code>ip a
+ip r
+ip neigh
+ethtool eth0</code></pre>
+            </div>
+            <p>
+              Toujours verifier lien physique, MTU et voisinage ARP.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Ports et sockets</h3>
+            <div class="code-block">
+              <pre><code>ss -tulpen
+lsof -i :443
+nft list ruleset</code></pre>
+            </div>
+            <p>
+              Identifier les services exposes pour securiser le perimetre.
+            </p>
+          </article>
+          <article class="card">
+            <h3>SSH avance</h3>
+            <div class="code-block">
+              <pre><code>ssh -vvv user@host
+ssh -L 8080:localhost:80 user@host
+ssh -J bastion user@host</code></pre>
+            </div>
+            <p>
+              Tunnels et jump hosts simplifient les architectures segmentees.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="journalisation" class="section">
+        <div class="section-title">
+          <p>Journalisation</p>
+          <h2>Logs, rotation, retention</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>systemd-journald</h3>
+            <div class="code-block">
+              <pre><code>journalctl --disk-usage
+sudo nano /etc/systemd/journald.conf
+sudo systemctl restart systemd-journald</code></pre>
+            </div>
+            <p>
+              Limiter l'espace et definir une retention claire evite les disques
+              pleins.
+            </p>
+          </article>
+          <article class="card">
+            <h3>logrotate</h3>
+            <div class="code-block">
+              <pre><code>sudo logrotate -d /etc/logrotate.conf
+cat /etc/logrotate.d/nginx
+sudo logrotate -f /etc/logrotate.conf</code></pre>
+            </div>
+            <p>
+              logrotate reste la base pour garder des logs exploitables.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="config-mgmt" class="section alt">
+        <div class="section-title">
+          <p>Configuration</p>
+          <h2>Templates et automatisation</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>fichiers critiques</h3>
+            <div class="code-block">
+              <pre><code>/etc/hosts
+/etc/fstab
+/etc/ssh/sshd_config</code></pre>
+            </div>
+            <p>
+              Documenter chaque modification et garder un historique.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Configuration distante</h3>
+            <div class="code-block">
+              <pre><code>ansible-playbook site.yml
+salt-call state.apply
+puppet agent -t</code></pre>
+            </div>
+            <p>
+              Automatiser evite les differences entre environnements.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Secrets</h3>
+            <div class="code-block">
+              <pre><code>sudo install -m 600 secret.env /etc/app/secret.env
+gpg -c secret.env</code></pre>
+            </div>
+            <p>
+              Ne jamais stocker de secrets en clair dans un depot.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <strong>unix-fr.org</strong>
+        <p>Administration Debian: stable, claire, documentee.</p>
+      </div>
+      <div class="footer-links">
+        <a href="performance.html">Performance</a>
+        <a href="conteneurs.html">Conteneurs</a>
+        <a href="securite.html">Securite</a>
+      </div>
+    </footer>
+  </body>
+</html>

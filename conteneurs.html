@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>unix-fr.org - Conteneurs et virtualisation</title>
+    <meta
+      name="description"
+      content="Conteneurs Linux : Docker, systemd-nspawn, LXC et KVM, bonnes pratiques et isolation."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-hero">
+      <nav class="nav">
+        <div class="logo">unix-fr.org</div>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="installation.html">Installation</a>
+          <a href="commandes.html">Commandes</a>
+          <a href="administration.html">Administration</a>
+          <a href="performance.html">Performance</a>
+          <a href="conteneurs.html">Conteneurs</a>
+          <a href="securite.html">Securite</a>
+          <a href="depannage.html">Depannage</a>
+          <a href="ressources.html">Ressources</a>
+        </div>
+      </nav>
+      <div class="hero-text">
+        <p class="eyebrow">Conteneurs</p>
+        <h1 class="page-title">Isolation et portabilite pour la prod.</h1>
+        <p class="lead">
+          Choisir la bonne technologie selon vos besoins : Docker, LXC,
+          systemd-nspawn ou KVM. Focus sur la securite, les volumes, et le
+          networking.
+        </p>
+        <div class="subnav">
+          <a href="#docker">Docker</a>
+          <a href="#images">Images</a>
+          <a href="#nspawn">systemd-nspawn</a>
+          <a href="#lxc">LXC</a>
+          <a href="#kvm">KVM</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="docker" class="section">
+        <div class="section-title">
+          <p>Docker</p>
+          <h2>Base solide et usage production</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Cycle de vie</h3>
+            <div class="code-block">
+              <pre><code>docker ps -a
+docker run -d --name api -p 8080:8080 api:latest
+docker logs -f api
+docker exec -it api /bin/sh</code></pre>
+            </div>
+            <p>
+              Toujours superviser les logs et la sante applicative.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Reseau et volumes</h3>
+            <div class="code-block">
+              <pre><code>docker network ls
+docker network create backend
+docker volume create dbdata
+docker run -v dbdata:/var/lib/postgresql data:latest</code></pre>
+            </div>
+            <p>
+              Isoler les reseaux internes et separer clairement les volumes.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="images" class="section alt">
+        <div class="section-title">
+          <p>Images</p>
+          <h2>Reproductibles et minimalistes</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Build multi-stage</h3>
+            <div class="code-block">
+              <pre><code>FROM golang:1.22 AS build
+WORKDIR /src
+RUN go build -o app
+
+FROM debian:stable-slim
+COPY --from=build /src/app /usr/local/bin/app
+CMD ["app"]</code></pre>
+            </div>
+            <p>
+              Les multi-stage reduisent drastiquement la taille des images.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Rootless</h3>
+            <div class="code-block">
+              <pre><code>dockerd-rootless-setuptool.sh install
+export DOCKER_HOST=unix:///run/user/1000/docker.sock
+Docker --context rootless ps</code></pre>
+            </div>
+            <p>
+              Le rootless diminue l'impact d'une compromission.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Scan d'images</h3>
+            <div class="code-block">
+              <pre><code>docker scout cves image:latest
+trivy image image:latest</code></pre>
+            </div>
+            <p>
+              Integrer un scan CVE avant chaque deploy.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="nspawn" class="section">
+        <div class="section-title">
+          <p>systemd-nspawn</p>
+          <h2>Conteneurs legers, integres a systemd</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Creation d'une machine</h3>
+            <div class="code-block">
+              <pre><code>sudo debootstrap stable /var/lib/machines/debian
+sudo systemd-nspawn -D /var/lib/machines/debian
+sudo machinectl list</code></pre>
+            </div>
+            <p>
+              nspawn est parfait pour des environnements de test rapides.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Reseau et isolation</h3>
+            <div class="code-block">
+              <pre><code>sudo systemd-nspawn -D /var/lib/machines/debian --private-network
+sudo machinectl shell debian</code></pre>
+            </div>
+            <p>
+              L'isolation reseau est simple a activer, utile pour les tests.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="lxc" class="section alt">
+        <div class="section-title">
+          <p>LXC</p>
+          <h2>Conteneurs systemes complets</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Creation rapide</h3>
+            <div class="code-block">
+              <pre><code>sudo apt install lxc lxc-templates
+sudo lxc-create -n debian -t download
+sudo lxc-start -n debian
+sudo lxc-info -n debian</code></pre>
+            </div>
+            <p>
+              LXC est utile quand on veut une VM legere mais complete.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Storage et config</h3>
+            <div class="code-block">
+              <pre><code>sudo lxc-config show
+sudo lxc-attach -n debian
+sudo lxc-stop -n debian</code></pre>
+            </div>
+            <p>
+              Modifier la config via /var/lib/lxc pour ajuster les limites.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="kvm" class="section">
+        <div class="section-title">
+          <p>KVM</p>
+          <h2>Virtualisation complete et performante</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Installation</h3>
+            <div class="code-block">
+              <pre><code>sudo apt install qemu-kvm libvirt-daemon
+sudo systemctl enable --now libvirtd</code></pre>
+            </div>
+            <p>
+              libvirt offre une couche d'orchestration simple.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Provisioning</h3>
+            <div class="code-block">
+              <pre><code>virt-install --name debian --ram 2048 --disk size=20 --cdrom debian.iso
+virsh list --all</code></pre>
+            </div>
+            <p>
+              virt-install cree des VMs sans interface graphique.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Reseau virtuel</h3>
+            <div class="code-block">
+              <pre><code>virsh net-list --all
+virsh net-start default
+virsh net-autostart default</code></pre>
+            </div>
+            <p>
+              Gerer les bridges pour exposer ou isoler les VMs.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="securite-conteneurs" class="section alt">
+        <div class="section-title">
+          <p>Securite conteneurs</p>
+          <h2>Limiter l'impact d'une fuite</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Principes clefs</h3>
+            <ul>
+              <li>Executer en non-root autant que possible</li>
+              <li>Limiter les capabilities Linux</li>
+              <li>Utiliser read-only rootfs</li>
+              <li>Isoler reseaux internes</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Exemples pratiques</h3>
+            <div class="code-block">
+              <pre><code>docker run --read-only --cap-drop ALL --tmpfs /tmp app:latest
+docker run --user 1000:1000 app:latest
+docker run --network backend app:latest</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <strong>unix-fr.org</strong>
+        <p>Conteneurs et virtualisation pour Linux en production.</p>
+      </div>
+      <div class="footer-links">
+        <a href="performance.html">Performance</a>
+        <a href="securite.html">Securite</a>
+        <a href="depannage.html">Depannage</a>
+      </div>
+    </footer>
+  </body>
+</html>

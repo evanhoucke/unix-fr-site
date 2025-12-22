@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>unix-fr.org - Performance Linux</title>
+    <meta
+      name="description"
+      content="Performance Linux : diagnostic CPU, memoire, I/O, profiling et tuning."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-hero">
+      <nav class="nav">
+        <div class="logo">unix-fr.org</div>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="installation.html">Installation</a>
+          <a href="commandes.html">Commandes</a>
+          <a href="administration.html">Administration</a>
+          <a href="performance.html">Performance</a>
+          <a href="conteneurs.html">Conteneurs</a>
+          <a href="securite.html">Securite</a>
+          <a href="depannage.html">Depannage</a>
+          <a href="ressources.html">Ressources</a>
+        </div>
+      </nav>
+      <div class="hero-text">
+        <p class="eyebrow">Performance</p>
+        <h1 class="page-title">Mesurer, comprendre, optimiser.</h1>
+        <p class="lead">
+          Approche structuree : observer avant de changer, isoler les goulets
+          d'etranglement, valider l'impact des optimisations.
+        </p>
+        <div class="subnav">
+          <a href="#diagnostic">Diagnostic</a>
+          <a href="#cpu">CPU</a>
+          <a href="#memoire">Memoire</a>
+          <a href="#io">I/O</a>
+          <a href="#tuning">Tuning</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="diagnostic" class="section">
+        <div class="section-title">
+          <p>Diagnostic</p>
+          <h2>Commencer par la vue globale</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Snapshot systeme</h3>
+            <div class="code-block">
+              <pre><code>uptime
+htop
+vmstat 1 5
+free -h
+sar -n DEV 1 3</code></pre>
+            </div>
+            <p>
+              Identifier si le probleme est CPU, memoire, I/O ou reseau avant de
+              plonger en profondeur.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Processus dominants</h3>
+            <div class="code-block">
+              <pre><code>ps aux --sort=-%cpu | head
+ps aux --sort=-%mem | head
+pidstat -r -u 1</code></pre>
+            </div>
+            <p>
+              Un seul processus bruyant peut expliquer des symptomes globaux.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="cpu" class="section alt">
+        <div class="section-title">
+          <p>CPU</p>
+          <h2>Threads, load average, scheduling</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Mesurer</h3>
+            <div class="code-block">
+              <pre><code>mpstat -P ALL 1
+pidstat -u -p 1234 1
+perf top</code></pre>
+            </div>
+            <p>
+              Mesurer l'usage par CPU et les hotspots dans les processus.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Load average</h3>
+            <div class="code-block">
+              <pre><code>uptime
+cat /proc/loadavg
+pidstat -w 1</code></pre>
+            </div>
+            <p>
+              Un load eleve ne veut pas dire CPU : il peut venir du I/O.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Affinite et priorites</h3>
+            <div class="code-block">
+              <pre><code>taskset -pc 0-3 1234
+renice -n -5 -p 1234
+chrt -p 1234</code></pre>
+            </div>
+            <p>
+              Ajuster prudemment les priorites sur les services critiques.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="memoire" class="section">
+        <div class="section-title">
+          <p>Memoire</p>
+          <h2>Pages, swap, caches</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Observation</h3>
+            <div class="code-block">
+              <pre><code>free -h
+vmstat 1
+cat /proc/meminfo</code></pre>
+            </div>
+            <p>
+              Distinguer cache, buffers et memoire reelle consommee.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Swap et pression</h3>
+            <div class="code-block">
+              <pre><code>swapon --show
+cat /proc/vmstat | grep -i swap
+sysctl vm.swappiness</code></pre>
+            </div>
+            <p>
+              Une pression swap constante est un signe d'alerte en production.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="io" class="section alt">
+        <div class="section-title">
+          <p>I/O disque</p>
+          <h2>Latence et debit</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Observation</h3>
+            <div class="code-block">
+              <pre><code>iostat -xz 1
+iotop -oP
+lsblk -d -o name,rota</code></pre>
+            </div>
+            <p>
+              Surveiller la latence est plus important que le debit brut.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Filesystem</h3>
+            <div class="code-block">
+              <pre><code>mount | column -t
+tune2fs -l /dev/sda1
+xfs_info /dev/sdb1</code></pre>
+            </div>
+            <p>
+              Certaines options de montage peuvent apporter un gain notable.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Test rapide</h3>
+            <div class="code-block">
+              <pre><code>dd if=/dev/zero of=/tmp/test bs=1M count=1024 conv=fdatasync
+fio --name=rand --rw=randread --size=1G --iodepth=32</code></pre>
+            </div>
+            <p>
+              Tester sur un environnement controle, jamais sur un disque critique.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="tuning" class="section">
+        <div class="section-title">
+          <p>Tuning</p>
+          <h2>Parametres et limites</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Kernel sysctl</h3>
+            <div class="code-block">
+              <pre><code>sysctl -a | grep -i swappiness
+sysctl -w vm.swappiness=10
+sudo nano /etc/sysctl.conf</code></pre>
+            </div>
+            <p>
+              Tester les changements en environnement controle et documenter.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Limites systemd</h3>
+            <div class="code-block">
+              <pre><code>systemctl show nginx | grep Limit
+sudo systemctl edit nginx
+ulimit -n</code></pre>
+            </div>
+            <p>
+              Les limites de fichiers et de processus impactent directement les
+              services reseau.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="reseau-perf" class="section alt">
+        <div class="section-title">
+          <p>Reseau</p>
+          <h2>Latence, congestion et buffers</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Mesures rapides</h3>
+            <div class="code-block">
+              <pre><code>ss -s
+ip -s link
+ping -c 5 1.1.1.1</code></pre>
+            </div>
+            <p>
+              Commencer par la qualite du lien et la perte de paquets.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Buffers TCP</h3>
+            <div class="code-block">
+              <pre><code>sysctl net.core.rmem_max
+sysctl net.core.wmem_max
+sysctl net.ipv4.tcp_congestion_control</code></pre>
+            </div>
+            <p>
+              Ajuster les buffers uniquement apres mesure et validation.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Capture</h3>
+            <div class="code-block">
+              <pre><code>tcpdump -i eth0 -w capture.pcap
+ngrep -W byline port 443</code></pre>
+            </div>
+            <p>
+              La capture permet de voir les retransmissions et les erreurs TLS.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <strong>unix-fr.org</strong>
+        <p>Performance et observabilite pour Linux en production.</p>
+      </div>
+      <div class="footer-links">
+        <a href="administration.html">Administration</a>
+        <a href="conteneurs.html">Conteneurs</a>
+        <a href="depannage.html">Depannage</a>
+      </div>
+    </footer>
+  </body>
+</html>

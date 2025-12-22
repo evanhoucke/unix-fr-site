@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>unix-fr.org - Commandes Linux</title>
+    <meta
+      name="description"
+      content="Commandes Linux avancees : shell, pipes, awk, sed, regex, scripts et outils de production."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-hero">
+      <nav class="nav">
+        <div class="logo">unix-fr.org</div>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="installation.html">Installation</a>
+          <a href="commandes.html">Commandes</a>
+          <a href="administration.html">Administration</a>
+          <a href="performance.html">Performance</a>
+          <a href="conteneurs.html">Conteneurs</a>
+          <a href="securite.html">Securite</a>
+          <a href="depannage.html">Depannage</a>
+          <a href="ressources.html">Ressources</a>
+        </div>
+      </nav>
+      <div class="hero-text">
+        <p class="eyebrow">Commandes Linux</p>
+        <h1 class="page-title">Le shell comme outil de production.</h1>
+        <p class="lead">
+          Du rappel des bases aux enchainements avances, avec un accent sur la
+          lisibilite, la securite et la reproductibilite.
+        </p>
+        <div class="subnav">
+          <a href="#bases">Bases</a>
+          <a href="#pipes">Pipes</a>
+          <a href="#texte">Traitement texte</a>
+          <a href="#fichiers">Fichiers</a>
+          <a href="#scripting">Scripting</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="bases" class="section">
+        <div class="section-title">
+          <p>Fondations</p>
+          <h2>Se deplacer et comprendre le systeme</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Navigation</h3>
+            <div class="code-block">
+              <pre><code>pwd
+ls -lah
+cd /etc
+cd -
+find . -maxdepth 2 -type f</code></pre>
+            </div>
+            <p>
+              Toujours inspecter avant d'agir. Utiliser ls et find pour cadrer
+              le contexte avant des commandes destructives.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Permissions</h3>
+            <div class="code-block">
+              <pre><code>stat fichier
+chmod 640 fichier
+chown user:group fichier
+umask 027</code></pre>
+            </div>
+            <p>
+              Maitriser les droits est indispensable pour la securite et la
+              cooperations entre services.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Processus</h3>
+            <div class="code-block">
+              <pre><code>ps aux | head
+pgrep -a nginx
+kill -TERM 1234
+nice -n 10 commande</code></pre>
+            </div>
+            <p>
+              Comprendre la priorite, les signaux et la hierarchie aide a
+              stabiliser un service sous charge.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="pipes" class="section alt">
+        <div class="section-title">
+          <p>Pipes et redirections</p>
+          <h2>Composer des chaines efficaces</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Redirections utiles</h3>
+            <div class="code-block">
+              <pre><code>commande > out.txt
+commande >> out.txt
+commande 2> err.txt
+commande 2>&1 | tee log.txt</code></pre>
+            </div>
+            <p>
+              Toujours separer stdout/stderr pour analyser les erreurs sans
+              polluer les pipelines.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Pipelines complexes</h3>
+            <div class="code-block">
+              <pre><code>grep -R "error" /var/log | sort | uniq -c | sort -nr
+journalctl -u ssh | grep "Failed" | tail -n 20
+ps aux | awk '{print $11}' | sort | uniq -c</code></pre>
+            </div>
+            <p>
+              Les pipelines sont puissants quand on limite chaque commande a une
+              tache precise et previsible.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="texte" class="section">
+        <div class="section-title">
+          <p>Traitement de texte</p>
+          <h2>awk, sed, grep, cut, tr</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>grep avance</h3>
+            <div class="code-block">
+              <pre><code>grep -R "timeout" /etc
+rg -n "server" /etc/nginx
+grep -E "^sshd" /etc/services</code></pre>
+            </div>
+            <p>
+              Utiliser les regex et un outil rapide comme rg pour chercher vite.
+            </p>
+          </article>
+          <article class="card">
+            <h3>awk pour rapports</h3>
+            <div class="code-block">
+              <pre><code>awk -F: '{print $1,$3}' /etc/passwd
+df -h | awk 'NR>1 {print $1,$5}'
+ss -tulpen | awk '{print $1,$5,$7}'</code></pre>
+            </div>
+            <p>
+              awk reste l'outil ideal pour des tableaux et des rapports rapides.
+            </p>
+          </article>
+          <article class="card">
+            <h3>sed et tr</h3>
+            <div class="code-block">
+              <pre><code>sed -n '1,120p' fichier
+sed -E 's/ +/ /g' fichier
+tr 'a-z' 'A-Z' < fichier</code></pre>
+            </div>
+            <p>
+              sed transforme un flux, tr normalise, et tout reste scriptable.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="fichiers" class="section alt">
+        <div class="section-title">
+          <p>Gestion de fichiers</p>
+          <h2>Archivage, sauvegarde, verification</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>tar et rsync</h3>
+            <div class="code-block">
+              <pre><code>tar -czf backup.tgz /etc /home
+rsync -av --delete /home/ /mnt/backup/home/
+rsync -avz user@host:/var/log/ ./logs/</code></pre>
+            </div>
+            <p>
+              rsync est le meilleur choix pour les backups incrementaux.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Integrite</h3>
+            <div class="code-block">
+              <pre><code>sha256sum image.iso
+sha256sum -c SHA256SUMS
+md5sum -c checksum.txt</code></pre>
+            </div>
+            <p>
+              Toujours verifier l'integrite d'un fichier critique.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="scripting" class="section">
+        <div class="section-title">
+          <p>Scripts Bash</p>
+          <h2>Fiables, lisibles, debuggables</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Structure minimaliste</h3>
+            <div class="code-block">
+              <pre><code>#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage: $0 <fichier>" >&2
+  exit 1
+fi</code></pre>
+            </div>
+            <p>
+              set -euo pipefail protege contre les erreurs silencieuses.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Debug et logs</h3>
+            <div class="code-block">
+              <pre><code>set -x
+exec > >(tee -a /var/log/backup.log) 2>&1
+trap 'echo "Erreur ligne $LINENO"' ERR</code></pre>
+            </div>
+            <p>
+              Ajouter des traces pour diagnostiquer vite en production.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="shell-avance" class="section alt">
+        <div class="section-title">
+          <p>Shell avance</p>
+          <h2>Job control, subshell, process substitution</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Job control</h3>
+            <div class="code-block">
+              <pre><code>commande &
+jobs
+fg %1
+bg %1</code></pre>
+            </div>
+            <p>
+              Le job control permet de garder la main sur des taches longues.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Subshell</h3>
+            <div class="code-block">
+              <pre><code>(cd /tmp && ls -lah)
+VAR=$(commande)</code></pre>
+            </div>
+            <p>
+              Les subshells isolent l'environnement et evitent les effets de bord.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Process substitution</h3>
+            <div class="code-block">
+              <pre><code>diff <(sort a.txt) <(sort b.txt)
+tee >(wc -l) < fichier</code></pre>
+            </div>
+            <p>
+              Compare ou duplique des flux sans fichiers temporaires.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="outils-pro" class="section">
+        <div class="section-title">
+          <p>Outils pro</p>
+          <h2>sed, awk, jq et utils rares</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>jq pour JSON</h3>
+            <div class="code-block">
+              <pre><code>cat data.json | jq '.items[] | .name'
+jq -r '.users[] | \"\\(.id) \\(.email)\"' data.json</code></pre>
+            </div>
+            <p>
+              jq est indispensable pour manipuler des API et des logs JSON.
+            </p>
+          </article>
+          <article class="card">
+            <h3>xargs et parallel</h3>
+            <div class="code-block">
+              <pre><code>find . -type f -name "*.log" | xargs -r wc -l
+printf '%s\n' *.log | xargs -n 1 gzip</code></pre>
+            </div>
+            <p>
+              xargs permet de factoriser des commandes et de paralleliser.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <strong>unix-fr.org</strong>
+        <p>Commandes et pipelines pour admins exigeants.</p>
+      </div>
+      <div class="footer-links">
+        <a href="administration.html">Administration</a>
+        <a href="performance.html">Performance</a>
+        <a href="depannage.html">Depannage</a>
+      </div>
+    </footer>
+  </body>
+</html>

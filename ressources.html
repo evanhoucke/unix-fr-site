@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>unix-fr.org - Ressources Linux & Debian</title>
+    <meta
+      name="description"
+      content="Ressources Linux et Debian : documentation, outils, checklists et references."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-hero">
+      <nav class="nav">
+        <div class="logo">unix-fr.org</div>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="installation.html">Installation</a>
+          <a href="commandes.html">Commandes</a>
+          <a href="administration.html">Administration</a>
+          <a href="performance.html">Performance</a>
+          <a href="conteneurs.html">Conteneurs</a>
+          <a href="securite.html">Securite</a>
+          <a href="depannage.html">Depannage</a>
+          <a href="ressources.html">Ressources</a>
+        </div>
+      </nav>
+      <div class="hero-text">
+        <p class="eyebrow">Ressources</p>
+        <h1 class="page-title">References utiles et checklists.</h1>
+        <p class="lead">
+          Une selection de ressources fiables pour approfondir vos pratiques
+          Linux et Debian, avec des outils de verification et des checklists.
+        </p>
+        <div class="subnav">
+          <a href="#docs">Docs</a>
+          <a href="#outils">Outils</a>
+          <a href="#checklists">Checklists</a>
+          <a href="#communautes">Communautes</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="docs" class="section">
+        <div class="section-title">
+          <p>Documentation</p>
+          <h2>Sources de confiance</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Debian officiel</h3>
+            <p>
+              Les guides Debian officiels couvrent l'installation, l'admin et
+              les bonnes pratiques de maintenance.
+            </p>
+            <a class="text-link" href="https://www.debian.org/doc/">debian.org/doc</a>
+          </article>
+          <article class="card">
+            <h3>Manpages locales</h3>
+            <p>
+              Les manpages restent l'outil le plus fiable pour comprendre un
+              binaire et ses options.
+            </p>
+            <div class="code-block">
+              <pre><code>man systemd
+man apt
+man ssh_config</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>RFC et standards</h3>
+            <p>
+              Pour le reseau et les protocoles, s'appuyer sur les RFC assures.
+            </p>
+            <div class="code-block">
+              <pre><code>rfc-editor.org
+IETF DNS, TLS, HTTP</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="outils" class="section alt">
+        <div class="section-title">
+          <p>Outils</p>
+          <h2>Boite a outils d'admin</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Observabilite</h3>
+            <ul>
+              <li>htop, iotop, vmstat</li>
+              <li>pidstat, sar</li>
+              <li>perf, strace, lsof</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Reseau</h3>
+            <ul>
+              <li>ip, ss, tcpdump</li>
+              <li>dig, traceroute</li>
+              <li>mtr, ethtool</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Securite</h3>
+            <ul>
+              <li>ufw, nft</li>
+              <li>fail2ban, auditd</li>
+              <li>lynis, clamav</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="checklists" class="section">
+        <div class="section-title">
+          <p>Checklists</p>
+          <h2>Points de controle avant production</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Serveur web</h3>
+            <ul>
+              <li>Ports exposes documentes</li>
+              <li>Reverse proxy configure</li>
+              <li>Logs centralises et rotate</li>
+              <li>Backups testes</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Base systeme</h3>
+            <ul>
+              <li>Mises a jour automatiques</li>
+              <li>SSH avec clefs uniquement</li>
+              <li>Firewall minimal</li>
+              <li>Monitoring basique actif</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="communautes" class="section alt">
+        <div class="section-title">
+          <p>Communautes</p>
+          <h2>Rester connecte</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Forums francophones</h3>
+            <ul>
+              <li>Forum Debian-fr</li>
+              <li>Ubuntu-fr</li>
+              <li>Stack Overflow en francais</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Listes de diffusion</h3>
+            <ul>
+              <li>debian-user-french</li>
+              <li>debian-security-announce</li>
+              <li>debian-devel</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Canaux temps reel</h3>
+            <ul>
+              <li>IRC libera #debian</li>
+              <li>Matrix Debian</li>
+              <li>Meetups locaux Linux</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="cheatsheets" class="section">
+        <div class="section-title">
+          <p>Cheatsheets</p>
+          <h2>Raccourcis utiles au quotidien</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>systemd</h3>
+            <div class="code-block">
+              <pre><code>systemctl status nginx
+systemctl restart nginx
+journalctl -u nginx -S today</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Reseau</h3>
+            <div class="code-block">
+              <pre><code>ip a
+ip r
+ss -tulpen</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Disk</h3>
+            <div class="code-block">
+              <pre><code>lsblk -f
+df -hT
+du -sh /var/log/*</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <strong>unix-fr.org</strong>
+        <p>Ressources et references Linux & Debian.</p>
+      </div>
+      <div class="footer-links">
+        <a href="installation.html">Installation</a>
+        <a href="commandes.html">Commandes</a>
+        <a href="securite.html">Securite</a>
+      </div>
+    </footer>
+  </body>
+</html>

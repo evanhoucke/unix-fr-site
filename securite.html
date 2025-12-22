@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>unix-fr.org - Securite Linux</title>
+    <meta
+      name="description"
+      content="Securite Linux : hardening, SSH, firewall, audits, AppArmor et mises a jour."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-hero">
+      <nav class="nav">
+        <div class="logo">unix-fr.org</div>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="installation.html">Installation</a>
+          <a href="commandes.html">Commandes</a>
+          <a href="administration.html">Administration</a>
+          <a href="performance.html">Performance</a>
+          <a href="conteneurs.html">Conteneurs</a>
+          <a href="securite.html">Securite</a>
+          <a href="depannage.html">Depannage</a>
+          <a href="ressources.html">Ressources</a>
+        </div>
+      </nav>
+      <div class="hero-text">
+        <p class="eyebrow">Securite</p>
+        <h1 class="page-title">Durcir un Debian sans complexite inutile.</h1>
+        <p class="lead">
+          Mesures prioritaires, defenses en profondeur et checklists pour une
+          hygiene securite solide sur postes et serveurs.
+        </p>
+        <div class="subnav">
+          <a href="#updates">Mises a jour</a>
+          <a href="#ssh">SSH</a>
+          <a href="#firewall">Firewall</a>
+          <a href="#audit">Audit</a>
+          <a href="#apparmor">AppArmor</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="updates" class="section">
+        <div class="section-title">
+          <p>Maintenance</p>
+          <h2>Mises a jour et hygiene</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Upgrade regulier</h3>
+            <div class="code-block">
+              <pre><code>sudo apt update
+sudo apt upgrade
+sudo apt install unattended-upgrades
+sudo dpkg-reconfigure unattended-upgrades</code></pre>
+            </div>
+            <p>
+              Les mises a jour de securite doivent etre automatiques en prod.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Inventaire</h3>
+            <div class="code-block">
+              <pre><code>apt list --upgradable
+apt-cache policy openssl
+dpkg -l | wc -l</code></pre>
+            </div>
+            <p>
+              Connaitre les packages installes permet de limiter la surface d'attaque.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="ssh" class="section alt">
+        <div class="section-title">
+          <p>SSH</p>
+          <h2>Acces distant securise</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Config de base</h3>
+            <div class="code-block">
+              <pre><code>sudo nano /etc/ssh/sshd_config
+PermitRootLogin no
+PasswordAuthentication no
+AllowUsers admin</code></pre>
+            </div>
+            <p>
+              Interdire le root et favoriser les clefs est un minimum.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Clefs et agents</h3>
+            <div class="code-block">
+              <pre><code>ssh-keygen -t ed25519
+ssh-copy-id admin@host
+ssh-add ~/.ssh/id_ed25519</code></pre>
+            </div>
+            <p>
+              Les clefs protegees par passphrase reduisent les risques.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Hardening avance</h3>
+            <div class="code-block">
+              <pre><code>MaxAuthTries 3
+LoginGraceTime 20
+AllowGroups sshusers</code></pre>
+            </div>
+            <p>
+              Limiter les tentatives et filtrer par groupe renforce l'acces.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="firewall" class="section">
+        <div class="section-title">
+          <p>Firewall</p>
+          <h2>Filtrer l'exposition</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>UFW simple</h3>
+            <div class="code-block">
+              <pre><code>sudo apt install ufw
+sudo ufw default deny incoming
+sudo ufw allow 22/tcp
+sudo ufw enable</code></pre>
+            </div>
+            <p>
+              UFW suffit pour la plupart des serveurs basiques.
+            </p>
+          </article>
+          <article class="card">
+            <h3>nftables</h3>
+            <div class="code-block">
+              <pre><code>sudo nft list ruleset
+sudo nft add table inet filter
+sudo nft add chain inet filter input { type filter hook input priority 0; }</code></pre>
+            </div>
+            <p>
+              nftables permet un controle fin et moderne du traffic.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="audit" class="section alt">
+        <div class="section-title">
+          <p>Audit et detection</p>
+          <h2>Voir ce qui se passe</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Auditd</h3>
+            <div class="code-block">
+              <pre><code>sudo apt install auditd
+sudo ausearch -m avc -ts today
+sudo aureport -f</code></pre>
+            </div>
+            <p>
+              auditd trace les actions critiques du systeme.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Fail2ban</h3>
+            <div class="code-block">
+              <pre><code>sudo apt install fail2ban
+sudo fail2ban-client status
+sudo fail2ban-client status sshd</code></pre>
+            </div>
+            <p>
+              Bloquer les tentatives bruteforce est indispensable.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Scan basique</h3>
+            <div class="code-block">
+              <pre><code>sudo ss -tulpen
+sudo lsof -i
+sudo chkrootkit</code></pre>
+            </div>
+            <p>
+              Un inventaire des ports ouverts est une base simple.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="apparmor" class="section">
+        <div class="section-title">
+          <p>Confinement</p>
+          <h2>AppArmor et profils</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Verifier les profils</h3>
+            <div class="code-block">
+              <pre><code>sudo aa-status
+sudo aa-enforce /etc/apparmor.d/*
+cat /var/log/syslog | grep apparmor</code></pre>
+            </div>
+            <p>
+              Activer les profils stricts sur les services exposes.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Bonnes pratiques</h3>
+            <ul>
+              <li>Limiter la surface d'attaque par role</li>
+              <li>Isoler les services par utilisateurs</li>
+              <li>Documenter chaque exception</li>
+              <li>Appliquer des mises a jour frequentes</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="hardening" class="section alt">
+        <div class="section-title">
+          <p>Hardening</p>
+          <h2>Durcissement par couches</h2>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Sysctl utiles</h3>
+            <div class="code-block">
+              <pre><code>sysctl -a | grep -E 'icmp|redirects'
+sysctl -w net.ipv4.conf.all.accept_redirects=0
+sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1</code></pre>
+            </div>
+            <p>
+              Desactiver les comportements reseau a risque limite les abus.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Services exposes</h3>
+            <div class="code-block">
+              <pre><code>ss -tulpen
+systemctl list-unit-files | grep enabled
+sudo systemctl disable avahi-daemon</code></pre>
+            </div>
+            <p>
+              Supprimer les services inutiles reduit la surface d'attaque.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Fichiers sensibles</h3>
+            <div class="code-block">
+              <pre><code>sudo chmod 600 /etc/ssh/sshd_config
+sudo chown root:root /etc/sudoers
+sudo find / -perm -4000 -type f</code></pre>
+            </div>
+            <p>
+              Auditer les SUID/SGID permet d'identifier les risques potentiels.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <strong>unix-fr.org</strong>
+        <p>Securite pragmatique pour Linux et Debian.</p>
+      </div>
+      <div class="footer-links">
+        <a href="administration.html">Administration</a>
+        <a href="performance.html">Performance</a>
+        <a href="depannage.html">Depannage</a>
+      </div>
+    </footer>
+  </body>
+</html>
