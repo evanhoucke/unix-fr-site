@@ -457,6 +457,33 @@ kubectl top pods -A</code></pre>
           </article>
         </div>
       </section>
+          <section id="auto-20251224-depannage" class="section alt">
+        <div class="section-title">
+          <p>Mise a jour quotidienne</p>
+          <h2>Ajout du 2025-12-24</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Depannage: check rapide</h3>
+            <p>
+              Cette section est ajoutee automatiquement et vise un public confirme.
+            </p>
+            <ul>
+              <li>Lire journalctl en priorite</li>
+              <li>Verifier systemctl --failed</li>
+              <li>Identifier les saturations disque</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Commandes</h3>
+            <div class="code-block">
+              <pre><code>journalctl -p err -S "today"
+systemctl --failed
+df -hT</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
