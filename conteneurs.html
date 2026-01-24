@@ -1294,6 +1294,33 @@ sort | uniq -c | sort -nr</code></pre>
           </article>
         </div>
       </section>
+          <section id="auto-20260124-dns" class="section alt">
+        <div class="section-title">
+          <p>Mise a jour quotidienne</p>
+          <h2>Ajout du 2026-01-24</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>DNS: resolution fiable et debug</h3>
+            <p>
+              Cette section est ajoutee automatiquement et vise un public confirme.
+            </p>
+            <ul>
+              <li>Verifier la chaine avec dig +trace</li>
+              <li>Observer resolvectl et cache local</li>
+              <li>Documenter les resolvers critiques</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Commandes</h3>
+            <div class="code-block">
+              <pre><code>dig +trace debian.org
+resolvectl status
+sudo systemctl restart systemd-resolved</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
