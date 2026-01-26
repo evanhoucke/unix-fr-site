@@ -1307,6 +1307,33 @@ sudo find / -perm -4000 -type f 2>/dev/null</code></pre>
           </article>
         </div>
       </section>
+          <section id="auto-20260126-stockage" class="section alt">
+        <div class="section-title">
+          <p>Mise a jour quotidienne</p>
+          <h2>Ajout du 2026-01-26</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Btrfs/ZFS: integrite et snapshots</h3>
+            <p>
+              Cette section est ajoutee automatiquement et vise un public confirme.
+            </p>
+            <ul>
+              <li>Verifier l etat des pools</li>
+              <li>Lancer un scrub regulier</li>
+              <li>Creer des snapshots horodates</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Commandes</h3>
+            <div class="code-block">
+              <pre><code>sudo btrfs scrub start -Bd /
+sudo zpool status
+sudo zfs snapshot tank/data</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
