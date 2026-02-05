@@ -1408,6 +1408,33 @@ sudo strace -fp 1234</code></pre>
           </article>
         </div>
       </section>
+          <section id="auto-20260205-conteneurs" class="section alt">
+        <div class="section-title">
+          <p>Mise a jour quotidienne</p>
+          <h2>Ajout du 2026-02-05</h2>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Conteneurs: hygiene de prod</h3>
+            <p>
+              Cette section est ajoutee automatiquement et vise un public confirme.
+            </p>
+            <ul>
+              <li>Isoler reseaux internes</li>
+              <li>Executer en non-root</li>
+              <li>Limiter les capabilities</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Commandes</h3>
+            <div class="code-block">
+              <pre><code>docker ps -a
+docker run --read-only --cap-drop ALL app:latest
+docker network ls</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
